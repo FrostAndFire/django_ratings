@@ -4,5 +4,10 @@
     <p>Id: {{ id }}</p>
     <p>Name: {{ name }}</p>
     <p>Content: {{ content }}</p>
-    <p>Rating: {{ rating }}</p>
+    <p>Rating: {{ avg_rating }}</p>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+    <button type="submit">Submit</button>
+    </form>
 </html>
