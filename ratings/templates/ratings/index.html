@@ -1,0 +1,13 @@
+<html>
+    <title>Main page</title>
+    <p>Main page</p>
+    {% if data %}
+        {% for name, id in data %}
+            <li>
+                <a href={% url 'card' id %}>Card name: {{ name }}, id: {{ id }}</a>
+            </li>
+        {% endfor %}
+    {% else %}
+        <p>No cards.</p>
+    {% endif %}
+</html>
