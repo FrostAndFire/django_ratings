@@ -13,7 +13,9 @@ def index(request):
             [card.id for card in cards]
             )}
     return render(request, 'ratings/index.html', context)
-    
+
+# card view
+
 def card(request, card_id):
 
     card = get_object_or_404(Card, id=card_id)
@@ -35,16 +37,28 @@ def card(request, card_id):
         form = RateForm(request.POST)
         
         if form.is_valid():
-            rate = Rating(
-                card = Card.objects.get(id=card_id),
-                user = request.user,
-                rating = form.cleaned_data['rating'],
-            )
-            all_rates = Rating.objects.filter(card=card_id)
-            avg = all_rates.aggregate(Avg('rating'))['rating__avg']
-            rate.save()
-            
-            card.avg_rating=avg
-            card.save()
+            try:
+                rate = Rating.objects.get(
+                    card=card_id,
+                    user=request.user
+                    )
+                rate.rating = form.cleaned_data['rating']
+                
+                rate.save()
+                
+            except Rating.DoesNotExist:    
+                rate = Rating(
+                    card = Card.objects.get(id=card_id),
+                    user = request.user,
+                    rating = form.cleaned_data['rating'],
+                )
+
+                rate.save()
+
+        all_rates = Rating.objects.filter(card=card_id)
+        avg = all_rates.aggregate(Avg('rating'))['rating__avg']
+        card.avg_rating = avg
+
+        card.save()
             
         return render(request, 'ratings/card.html', context)
